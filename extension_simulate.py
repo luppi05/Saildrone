@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ode import solve_ivp
 from extension_programme import dynamics_auto
+from extension_programme import waypoints
 
 
 #simulate from 0s to 600s with initial conditions
@@ -35,6 +36,10 @@ def plot_trajectory(t, z):
     plt.axis("equal")
     plt.grid(True)
     plt.show()
+
+    wps = np.array(waypoints)
+    plt.scatter(wps[:,0], wps[:,1], c='red', s=40, marker='x')
+    plt.plot(wps[:,0], wps[:,1], 'r--')
 
 
 if __name__ == "__main__":
