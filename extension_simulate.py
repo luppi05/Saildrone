@@ -4,11 +4,11 @@ from ode import solve_ivp
 from extension_programme import dynamics_auto
 
 
-#simulate from 0s to 700s
+#simulate from 0s to 600s with initial conditions
 def simulate_auto():
 
     t0 = 0
-    tmax = 700
+    tmax = 600
     dt = 0.05
 
     z0 = np.array([
@@ -19,7 +19,7 @@ def simulate_auto():
         2.9,
         0.0
     ])
-
+#solve ODE
     t, z = solve_ivp(dynamics_auto, t0, tmax, dt, z0, method='RK')
     return t, z
 

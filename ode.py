@@ -16,7 +16,7 @@ def step_rk(state_deriv, t, dt, z):
 
     return z + (dt/6.0) * (k1 + 2*k2 + 2*k3 + k4)
 
-
+#solve initial value problem
 def solve_ivp(state_deriv, t0, tmax, dt, z0, method='RK'):
 
     z = z0.reshape(-1, 1)

@@ -32,7 +32,7 @@ def aero_coefficients(alpha):
 def aero_forces(alpha, v_aw):
     V = np.linalg.norm(v_aw)
     q = 0.5 * rho * V*V
-    
+ 
     CL, CD = aero_coefficients(alpha)
     L = CL * q * A
     D = CD * q * A
@@ -41,10 +41,10 @@ def aero_forces(alpha, v_aw):
 #calculate x and y forces
 def aero_force_world(alpha, v_aw):
     L, D = aero_forces(alpha, v_aw)
-    
+#direction vectors    
     drag_dir = v_aw / np.linalg.norm(v_aw)
     lift_dir = np.array ([drag_dir[1], -drag_dir[0]])
-    
+#total force    
     F = L * lift_dir + D * drag_dir
     return F
 
@@ -77,7 +77,7 @@ def heading_to_waypoint(x, y, wp):
 def pick_current_waypoint(x, y, waypoints, idx, tol=5.0):
     if idx >= len(waypoints):
         return idx
-
+#current waypoint
     wp = waypoints[idx]
     if np.hypot(wp[0] - x, wp[1] - y) < tol:
         return idx + 1
@@ -101,7 +101,7 @@ def sail_controller_vmg(theta, vx, vy):
         theta_vmg = theta
 
     vmg_dir = np.array([np.cos(theta_vmg), np.sin(theta_vmg)])
-
+#calculate apparent wind angle
     beta_aw = apparent_wind_angle(v_aw)
 
     best_beta = 0.0 #initialise the best angle at zero
@@ -111,11 +111,11 @@ def sail_controller_vmg(theta, vx, vy):
 
         theta_sail = theta + beta_sail
         alpha = theta_sail - beta_aw
-
+#calculate aerodynamic force in world frame
         F_world = aero_force_world(alpha, v_aw)
-
+#calculate score based on vmg direction
         score = np.dot(F_world, vmg_dir)
-
+#update best score and angle if current one is better
         if score > best_score:
             best_score = score
             best_beta = beta_sail
