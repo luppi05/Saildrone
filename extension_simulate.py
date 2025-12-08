@@ -38,8 +38,7 @@ def plot_trajectory(t, z):
     plt.show()
 
     wps = np.array(waypoints)
-    plt.scatter(wps[:,0], wps[:,1], c='red', s=40, marker='x')
-    plt.plot(wps[:,0], wps[:,1], 'r--')
+    plt.scatter(wps[:,0], wps[:,1], c='red', s=100, marker='o')
 
 
 if __name__ == "__main__":
