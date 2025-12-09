@@ -11,7 +11,7 @@ wps = np.array(waypoints)
 def simulate_auto():
 
     t0 = 0
-    tmax = 650
+    tmax = 700
     dt = 0.05
 
     z0 = np.array([

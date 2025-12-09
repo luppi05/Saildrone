@@ -17,14 +17,15 @@ waypoints = [
 
 current_wp_index = 0
 #returns optimal sail and rudder angle for control inputs
-def control_inputs_auto(x, y, theta, vx, vy, omega):
+def control_inputs_auto(t, x, y, theta, vx, vy, omega):
+    true_wind = mf.wind_vector(t, x, y)
     global current_wp_index
     current_wp_index = mf.pick_current_waypoint(x, y, waypoints, current_wp_index)
     #just continue on current path if there are no more waypoints
     if current_wp_index >= len(waypoints):
         theta_target = theta
         beta_rudder = mf.rudder_controller(theta, theta_target, omega)
-        beta_sail = mf.sail_controller_vmg(theta, vx, vy)
+        beta_sail = mf.sail_controller_vmg(theta, vx, vy, true_wind)
         return beta_sail, beta_rudder
     
 
@@ -36,17 +37,18 @@ def control_inputs_auto(x, y, theta, vx, vy, omega):
         theta_target = np.deg2rad(45)
 
     beta_rudder = mf.rudder_controller(theta, theta_target, omega)
-    beta_sail = mf.sail_controller_vmg(theta, vx, vy)
+    beta_sail = mf.sail_controller_vmg(theta, vx, vy, true_wind)
 
     return beta_sail, beta_rudder
 
 def dynamics_auto(t, state):
     x, y, theta, vx, vy, omega = state
 #calculate apparent wind
-    v_aw = mf.apparent_wind(vx, vy)
+    true_wind = mf.wind_vector(t, x, y)
+    v_aw = mf.apparent_wind(vx, vy, true_wind)
     beta_aw = mf.apparent_wind_angle(v_aw)
 #get control inputs
-    beta_sail, beta_rudder = control_inputs_auto(x, y, theta, vx, vy, omega)
+    beta_sail, beta_rudder = control_inputs_auto(t, x, y, theta, vx, vy, omega)
     #calculate angles of attack
     theta_sail = theta + beta_sail
     alpha = theta_sail - beta_aw
@@ -63,6 +65,10 @@ def dynamics_auto(t, state):
     ax = Fx / mass
     ay = Fy / mass
     omega_dot = M_total / I
+#effects of current
+    current = mf.current_vector(t, x, y)
+    vx,vy = np.array([vx, vy]) - current
+
 #return state derivatives
     return np.array([
         vx,
