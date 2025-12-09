@@ -127,7 +127,8 @@ def heading_to_waypoint(x, y, wp):
 
 #move to next waypoint once current waypoint has been reached
 def pick_current_waypoint(x, y, waypoints, idx, tol=5.0):
-    if idx >= len(waypoints):
+    if idx == len(waypoints)-1:
+        idx = 0
         return idx
 #current waypoint
     wp = waypoints[idx]

@@ -11,8 +11,7 @@ waypoints = [
     (150, 275),
     (200, 350),
     (15, -50),
-    (0,0),
-    (-500, 200)
+    (0,0)
 ]
 
 current_wp_index = 0
@@ -21,13 +20,7 @@ def control_inputs_auto(t, x, y, theta, vx, vy, omega):
     true_wind = mf.wind_vector(t, x, y)
     global current_wp_index
     current_wp_index = mf.pick_current_waypoint(x, y, waypoints, current_wp_index)
-    #just continue on current path if there are no more waypoints
-    if current_wp_index >= len(waypoints):
-        theta_target = theta
-        beta_rudder = mf.rudder_controller(theta, theta_target, omega)
-        beta_sail = mf.sail_controller_vmg(theta, vx, vy, true_wind)
-        return beta_sail, beta_rudder
-    
+
 
     wp = waypoints[current_wp_index] #set target waypoint
     theta_target = mf.heading_to_waypoint(x, y, wp) #calculate target heading
