@@ -23,7 +23,7 @@ def wind_vector(t, x, y):
 
     smooth = np.array([wx_smooth, wy_smooth])
 
-    #gusts of wind (Ornstein-Uhlenbeck process) see the reference
+    #gusts of wind (ornstein-uhlenbeck process) see the reference
     dt = 0.05  #time step
     tau = 25.0  #time scale of gusts
     sigma = 0.5  #standard deviation of gusts
