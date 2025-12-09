@@ -24,7 +24,7 @@ def simulate_auto():
         0.0 #initial angular velocity
     ])
 #solve ODE
-    t, z = solve_ivp(dynamics_auto, t0, tmax, dt, z0, method='RK')
+    t, z = solve_ivp(dynamics_auto, t0, tmax, dt, z0)
     wind_hist = np.array(wind_history)
     current_hist = np.array(current_history)
     return t, z, wind_hist, current_hist
