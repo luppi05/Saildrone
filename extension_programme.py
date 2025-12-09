@@ -39,7 +39,7 @@ def control_inputs_auto(t, x, y, theta, vx, vy, omega):
 
     return beta_sail, beta_rudder
 
-def dynamics_auto(t, state, log=False):
+def dynamics_auto(t, state, log=False): #log is to log wind/current history
     x, y, theta, vx, vy, omega = state
 #calculate apparent wind
     true_wind = mf.wind_vector(t, x, y)

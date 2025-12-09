@@ -8,7 +8,7 @@ from extension_programme import waypoints, wind_history, current_history
 wps = np.array(waypoints)
 
 
-#simulate from 0s to 450s with initial conditions
+#simulate from 0s to 500s with initial conditions
 def simulate_auto():
 
     t0 = 0
