@@ -17,16 +17,16 @@ def wind_vector(t, x, y):
     f2 = 0.0012 * t + 0.0008 * x
     f3 = 0.0007 * t + 0.0012 * y
 
-    wx_smooth = base[0]  + 0.6*np.sin(f1)+ 0.4*np.sin(f2 + 1.3) + 0.2*np.sin(f3 + 0.8)
+    wx_smooth = base[0]  + 0.3*np.sin(f1)+ 0.2*np.sin(f2 + 1.3) + 0.1*np.sin(f3 + 0.8)
 
-    wy_smooth = base[1]+ 0.6*np.sin(f1 + 2.1) + 0.4*np.sin(f2 + 0.4) + 0.2*np.sin(f3 + 2.7)
+    wy_smooth = base[1]+ 0.3*np.sin(f1 + 2.1) + 0.2*np.sin(f2 + 0.4) + 0.1*np.sin(f3 + 2.7)
 
     smooth = np.array([wx_smooth, wy_smooth])
 
     #gusts of wind (Ornstein-Uhlenbeck process) see the reference
     dt = 0.05   #time step
     tau = 3.0  #time scale of gusts
-    sigma = 0.5  #standard deviation of gusts
+    sigma = 0.2  #standard deviation of gusts
     #equation from reference
     gust_state += -(gust_state / tau) * dt + sigma * np.sqrt(dt) * np.random.randn(2)
 
@@ -54,7 +54,7 @@ def current_vector(t, x, y):
     alpha = 0.98
     current_state = alpha * current_state + (1 - alpha) * noise_raw
 
-    return -smooth - 0.8 * current_state
+    return -0.5*smooth - 0.5 * current_state
 
 
 #calculate apparent wind
@@ -127,13 +127,12 @@ def heading_to_waypoint(x, y, wp):
 
 #move to next waypoint once current waypoint has been reached
 def pick_current_waypoint(x, y, waypoints, idx, tol=5.0):
-    if idx == len(waypoints)-1:
-        idx = 0
-        return idx
-#current waypoint
+    #current waypoint
     wp = waypoints[idx]
     if np.hypot(wp[0] - x, wp[1] - y) < tol:
-        return idx + 1
+        idx += 1
+    if idx == len(waypoints):
+        idx = 0  #loop back to first waypoint
     return idx
 
 #rudder controller

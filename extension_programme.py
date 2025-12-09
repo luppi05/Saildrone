@@ -21,7 +21,6 @@ def control_inputs_auto(t, x, y, theta, vx, vy, omega):
     global current_wp_index
     current_wp_index = mf.pick_current_waypoint(x, y, waypoints, current_wp_index)
 
-
     wp = waypoints[current_wp_index] #set target waypoint
     theta_target = mf.heading_to_waypoint(x, y, wp) #calculate target heading
     #tack into the wind if the heading is upwind
