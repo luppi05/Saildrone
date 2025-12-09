@@ -13,48 +13,41 @@ def wind_vector(t, x, y):
     base = np.array([-6.7, 0.0])
 
 #wind that varies sinusoildally over time and space to give smooth variation
-    f1 = 0.0005 * t
-    f2 = 0.0012 * t + 0.0008 * x
-    f3 = 0.0007 * t + 0.0012 * y
-
-    wx_smooth = base[0]  + 0.3*np.sin(f1)+ 0.2*np.sin(f2 + 1.3) + 0.1*np.sin(f3 + 0.8)
-
-    wy_smooth = base[1]+ 0.3*np.sin(f1 + 2.1) + 0.2*np.sin(f2 + 0.4) + 0.1*np.sin(f3 + 2.7)
+    f1 = 0.02 * t #time varying component
+    f2 = 0.005 * t + 0.01 * x #spatial varying component in x direction
+    f3 = 0.01 * t + 0.005 * y #spatial varying component in y direction
+    #x direction
+    wx_smooth = base[0]  + 0.8*np.sin(f1)+ 0.4*np.sin(f2 + 1.3) + 0.2*np.sin(f3 + 0.8)
+    #y direction
+    wy_smooth = base[1]+ 0.8*np.sin(f1 + 2.1) + 0.4*np.sin(f2 + 0.4) + 0.2*np.sin(f3 + 2.7)
 
     smooth = np.array([wx_smooth, wy_smooth])
 
     #gusts of wind (Ornstein-Uhlenbeck process) see the reference
-    dt = 0.05   #time step
-    tau = 3.0  #time scale of gusts
-    sigma = 0.2  #standard deviation of gusts
+    dt = 0.05  #time step
+    tau = 25.0  #time scale of gusts
+    sigma = 0.5  #standard deviation of gusts
     #equation from reference
     gust_state += -(gust_state / tau) * dt + sigma * np.sqrt(dt) * np.random.randn(2)
 
     gust = gust_state
-    return smooth - gust
+    return smooth + gust
 
-
-current_state = np.array([0.0, 0.0])
-
+#calculate current
 def current_vector(t, x, y):
-    global current_state
     
-    base = np.array([0.4, 0.2])
+    base = np.array([-0.5, 0.0]) #base current
     
-    c1 = 0.0001 * t
-    c2 = 0.0002 * t + 0.0003 * x
+    c1 = 0.00005 * t #time varying component
+    c2 = 0.001 * x + 0.005 * y #spatial varying component
 
-    cx_smooth = base[0] + 0.1 * np.sin(c1) + 0.05 * np.sin(c2 + 1.1)
+    cx = base[0] + 0.1 * np.sin(c1) + 0.05 * np.sin(c2 + 1.1) #x direction
 
-    cy_smooth = base[1] + 0.1 * np.sin(c1 + 2.3) + 0.05 * np.sin(c2 + 0.6)
+    cy = base[1] + 0.01 * np.sin(c1 + 2.3) + 0.005 * np.sin(c2 + 0.6) #y direction
 
-    smooth = np.array([cx_smooth, cy_smooth])
-#very small random changes in current to simulate turbulence
-    noise_raw = 0.02 * np.random.randn(2)   # very small
-    alpha = 0.98
-    current_state = alpha * current_state + (1 - alpha) * noise_raw
+    current = np.array([cx, cy])
 
-    return -0.5*smooth - 0.5 * current_state
+    return current
 
 
 #calculate apparent wind

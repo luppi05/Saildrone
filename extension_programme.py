@@ -10,9 +10,13 @@ waypoints = [
     (100, 350), 
     (150, 275),
     (200, 350),
-    (15, -50),
+    (100, -50),
     (0,0)
 ]
+
+wind_history = []
+current_history = []
+
 
 current_wp_index = 0
 #returns optimal sail and rudder angle for control inputs
@@ -25,15 +29,17 @@ def control_inputs_auto(t, x, y, theta, vx, vy, omega):
     theta_target = mf.heading_to_waypoint(x, y, wp) #calculate target heading
     #tack into the wind if the heading is upwind
     #one tack was chosen as opposed to multiple as it is faster
-    if abs(theta_target) < np.deg2rad(45):
-        theta_target = np.deg2rad(45)
+    theta_wind = np.arctan2(true_wind[1], true_wind[0])
+    rel_angle = mf.angle_wrap(theta_target - theta_wind)
+    if abs(rel_angle) < np.deg2rad(45): #if heading is within 45 degrees of the wind
+        theta_target = theta_wind +np.deg2rad(45)*np.sign(rel_angle) #tack angle of 45 degrees
 
     beta_rudder = mf.rudder_controller(theta, theta_target, omega)
     beta_sail = mf.sail_controller_vmg(theta, vx, vy, true_wind)
 
     return beta_sail, beta_rudder
 
-def dynamics_auto(t, state):
+def dynamics_auto(t, state, log=False):
     x, y, theta, vx, vy, omega = state
 #calculate apparent wind
     true_wind = mf.wind_vector(t, x, y)
@@ -58,8 +64,11 @@ def dynamics_auto(t, state):
     ay = Fy / mass
     omega_dot = M_total / I
 #effects of current
-    current = mf.current_vector(t, x, y)
-    vx,vy = np.array([vx, vy]) - current
+    true_current = mf.current_vector(t, x, y)
+    if log:
+        wind_history.append(true_wind)
+        current_history.append(true_current)
+    vx,vy = np.array([vx, vy]) + true_current
 
 #return state derivatives
     return np.array([
