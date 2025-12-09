@@ -17,21 +17,20 @@ def wind_vector(t, x, y):
     f2 = 0.0012 * t + 0.0008 * x
     f3 = 0.0007 * t + 0.0012 * y
 
-    wx_smooth = base[0]  + 1.2*np.sin(f1)+ 0.8*np.sin(f2 + 1.3) + 0.5*np.sin(f3 + 0.8)
+    wx_smooth = base[0]  + 0.6*np.sin(f1)+ 0.4*np.sin(f2 + 1.3) + 0.2*np.sin(f3 + 0.8)
 
-    wy_smooth = base[1]+ 1.0*np.sin(f1 + 2.1) + 0.6*np.sin(f2 + 0.4) + 0.3*np.sin(f3 + 2.7)
+    wy_smooth = base[1]+ 0.6*np.sin(f1 + 2.1) + 0.4*np.sin(f2 + 0.4) + 0.2*np.sin(f3 + 2.7)
 
     smooth = np.array([wx_smooth, wy_smooth])
 
     #gusts of wind (Ornstein-Uhlenbeck process) see the reference
     dt = 0.05   #time step
     tau = 3.0  #time scale of gusts
-    sigma = 1.0  #standard deviation of gusts
+    sigma = 0.5  #standard deviation of gusts
     #equation from reference
     gust_state += -(gust_state / tau) * dt + sigma * np.sqrt(dt) * np.random.randn(2)
 
     gust = gust_state
-
     return smooth - gust
 
 
